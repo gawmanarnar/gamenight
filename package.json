@@ -1,0 +1,13 @@
+{
+  "name": "gamenight",
+  "version": "1.0.0",
+  "description": "simple rest api to generate game night schedules",
+  "main": "server.js",
+  "author": "Tyler Gaw",
+  "license": "WTFPL",
+  "dependencies": {
+    "express": "^4.13.4",
+    "moment": "^2.11.1",
+    "mongoose": "^4.3.6"
+  }
+}
