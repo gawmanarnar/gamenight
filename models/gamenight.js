@@ -3,7 +3,7 @@ var Game = require('./game');
 
 var gamenightSchema = mongoose.Schema({
     date: {type: Date, required: true, unique: true },
-    games: [Game]
+    games: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Game'}]
 });
 
 module.exports = mongoose.model('Gamenight', gamenightSchema);

@@ -42,51 +42,62 @@ app.get('/', function (req, res) {
     var wednesdayEnd = moment(wednesday).endOf('day');
 
     Gamenight.findOne({date: { $gte: wednesday.toDate(), $lt: wednesdayEnd.toDate() }}, function(err, night) {
-        if(err) {
+        if (err) {
             console.log(err);
         } else {
-            if(night) {
-                console.log('success');
-                return res.json({ message: 'success'});
+            if (night) {
+                console.log('already exists');
+                return res.json({message: 'already exists'});
+            }
+        }
+
+        var newGamenight = new Gamenight({date: wednesday.toDate()});
+        
+        //  Get all of the players
+        Player.find({}, function (err, players) {
+            if (err) {
+                console.log(err);
             }
 
-            var newGamenight = new Gamenight();
-            newGamenight.date = wednesday;
+            shuffle(players);
 
-            Player.find({}, function(err, players) {
-                shuffle(players);
-
-                players.forEach(function(player) {
-                    console.log(player.name);
-                });
-
-                while(players.length > 0 ) {
-                    console.log('here');
-                    var newGame = Game();
-
-                    var player1 = players.pop();
-                    newGame.player1 = player1.name;
-
-                    if(players.length > 0) {
-                        var player2 = players.pop();
-                        newGame.player2 = player2.name;
-                        player2.played.push(newGame.player1);
-                        player1.played.push(newGame.player2);
-                    } else {
-                        player1.played.push("");
-                    }
-                    newGamenight.games.push(newGame);
-                }
+            players.forEach(function (player) {
+                console.log(player.name);
             });
 
+            while (players.length > 0) {
+                var player1 = players.pop();
+                var newGame = Game({player1: player1.name, player2: ''});
+
+                if (players.length > 0) {
+                    var player2 = players.pop();
+                    newGame.player2 = player2.name;
+
+                    player1.played.push(player2._id);
+                    player2.played.push(player1._id);
+                }
+
+                newGame.save(function (error) {
+                    if (error) {
+                        console.log(error);
+                    } else {
+                        newGamenight.games.push(newGame._id);
+                    }
+                });
+            }
+        });
+
+        if (newGamenight.games.length > 0) {
             newGamenight.save(function (error) {
-                if(error) {
-                    console.log(err);
+                if (error) {
+                    console.log(error);
                 } else {
                     console.log('created');
-                    return res.json({ message: 'created'});
+                    return res.json({message: 'created'});
                 }
             });
+        } else {
+            console.log('no games?');
         }
     });
 });
