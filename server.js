@@ -101,13 +101,8 @@ var createGame = function(gameDate) {
     });
 }
 
-app.get('/', function (req, res) {
-    // In moment, this week's Wednesday corresponds to 3. Next week's Wednesday corresponds to 10 (3 + 7 = 10).
-    // If Wednesday has passed in the current week (day > 3), we should be looking to next Wednesday.
-    var wednesday =  moment().day(moment().day() > 3 ? 10 : 3).startOf('day');
-    var wednesdayEnd = moment(wednesday).endOf('day');
-
-    Gamenight.findOne({date: { $gte: wednesday.toDate(), $lt: wednesdayEnd.toDate() }}, function(err, night) {
+var ensureGameExists = function(startTime, endTime) {
+    Gamenight.findOne({date: { $gte: startTime, $lt: endTime }}, function(err, night) {
         if (err) {
             console.log(err);
         } else {
@@ -119,6 +114,14 @@ app.get('/', function (req, res) {
             createGame(wednesday.toDate());
         }
     });
+}
+app.get('/', function (req, res) {
+    // In moment, this week's Wednesday corresponds to 3. Next week's Wednesday corresponds to 10 (3 + 7 = 10).
+    // If Wednesday has passed in the current week (day > 3), we should be looking to next Wednesday.
+    var wednesday =  moment().day(moment().day() > 3 ? 10 : 3).startOf('day');
+    var wednesdayEnd = moment(wednesday).endOf('day');
+
+    ensureGameExists(wednesday.toDate(), wednesdayEnd.toDate);
 
     Gamenight.findOne({date: { $gte: wednesday.toDate(), $lt: wednesdayEnd.toDate() }}).populate('games').exec(function (err, item) {
         console.log(item.date);
