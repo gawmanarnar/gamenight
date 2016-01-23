@@ -119,6 +119,11 @@ app.get('/', function (req, res) {
             createGame(wednesday.toDate());
         }
     });
+
+    Gamenight.findOne({date: { $gte: wednesday.toDate(), $lt: wednesdayEnd.toDate() }}).populate('games').exec(function (err, item) {
+        console.log(item.date);
+        console.log(item.games);
+    });
 });
 
 var port = process.env.PORT || 3000;
