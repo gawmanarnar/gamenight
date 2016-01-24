@@ -95,12 +95,17 @@ app.get('/', function (req, res) {
                 });
             }
         }
-    ], function(error) {
-        Gamenight.findOne({date: { $gte: wednesday.toDate(), $lt: wednesdayEnd.toDate() }}).populate('games').exec(function (err, item) {
-            console.log(item);
+    ], function(night) {
+        console.log(night);
 
-            //console.log(item.date);
-            //console.log(item.games);
+        res.status(200).send({
+            "response_type": 'in_channel',
+            "text": 'Games for ' + moment(night.date).format("MMM Do YYYY"),
+            "attachments": [
+                {
+                    "text": 'Player1 vs Player2\nPlayer3 vs Player4\nOddman: Player5'
+                }
+            ]
         });
     });
 });
