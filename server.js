@@ -96,16 +96,27 @@ app.get('/', function (req, res) {
             }
         }
     ], function(night) {
-        console.log(night);
+        Gamenight.findOne({date: night.date }).populate('games').exec(function (err, item) {
 
-        res.status(200).send({
-            "response_type": 'in_channel',
-            "text": 'Games for ' + moment(night.date).format("MMM Do YYYY"),
-            "attachments": [
-                {
-                    "text": 'Player1 vs Player2\nPlayer3 vs Player4\nOddman: Player5'
+            var attachStr = '';
+            async.each(item.games, function (game, callback) {
+                if(game.player2 !== '') {
+                    attachStr = attachStr.concat(game.player1 + ' vs ' + game.player2 + '\n');
+                } else {
+                    attachStr = attachStr.concat('Oddman: ' + game.player1);
                 }
-            ]
+                callback();
+            }, function () {
+                res.status(200).send({
+                    "response_type": 'in_channel',
+                    "text": 'Games for ' + moment(night.date).format("MMM Do, YYYY"),
+                    "attachments": [
+                        {
+                            "text": attachStr
+                        }
+                    ]
+                });
+            });
         });
     });
 });
