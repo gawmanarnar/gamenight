@@ -1,5 +1,6 @@
 // Knuth shuffle algorithm
 // taken from http://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
+// perhaps we should just use knuth-shuffle npm package?
 var Shuffle = function shuffle(array) {
     var currentIndex = array.length, temporaryValue, randomIndex;
 
