@@ -4,6 +4,8 @@ var mongoose = require('mongoose');
 var moment = require('moment');
 var async = require('async');
 
+var utilities = require('./app/utils');
+
 // Connect to the database
 var database = require('./config/database');
 mongoose.connect(database.db);
@@ -15,25 +17,6 @@ var app = express();
 var Gamenight = require('./models/gamenight');
 var Game = require('./models/game');
 var Player = require('./models/player');
-
-function shuffle(array) {
-    var currentIndex = array.length, temporaryValue, randomIndex;
-
-    // While there remain elements to shuffle...
-    while (0 !== currentIndex) {
-
-        // Pick a remaining element...
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex -= 1;
-
-        // And swap it with the current element.
-        temporaryValue = array[currentIndex];
-        array[currentIndex] = array[randomIndex];
-        array[randomIndex] = temporaryValue;
-    }
-
-    return array;
-}
 
 app.get('/', function (req, res) {
     // In moment, this week's Wednesday corresponds to 3. Next week's Wednesday corresponds to 10 (3 + 7 = 10).
@@ -55,7 +38,7 @@ app.get('/', function (req, res) {
                 Player.find({}, function (error, players) {
                     if (error) throw error;
 
-                    shuffle(players);
+                    utilities.shuffle(players);
 
                     var newGamenight = new Gamenight({date: wednesday.toDate()});
                     var games = [];
