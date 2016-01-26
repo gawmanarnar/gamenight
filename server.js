@@ -84,7 +84,7 @@ app.get('/', function (req, res) {
             var attachStr = '';
             async.each(item.games, function (game, callback) {
                 if(game.player2 !== '') {
-                    attachStr = attachStr.concat(game.player1 + ' vs ' + game.player2 + '\n');
+                    attachStr = attachStr.concat(game.player1 + ' vs. ' + game.player2 + '\n');
                 } else {
                     attachStr = attachStr.concat('Oddman: ' + game.player1);
                 }
@@ -92,7 +92,7 @@ app.get('/', function (req, res) {
             }, function () {
                 res.status(200).send({
                     "response_type": 'in_channel',
-                    "text": 'Games for ' + moment(night.date).format("MMM Do, YYYY"),
+                    "text": 'Games for ' + moment(night.date).format("MMM Do, YYYY") + ':',
                     "attachments": [
                         {
                             "text": attachStr
