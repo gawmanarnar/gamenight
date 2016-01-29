@@ -108,6 +108,9 @@ app.get('/', function (req, res) {
 });
 
 app.get('/getmercd', function (req, res) {
+
+    console.log('http://' + req.headers.host + '/getmercd.gif');
+
     res.status(200).send({
         "response_type": 'in_channel',
         "attachments": [
