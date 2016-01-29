@@ -108,14 +108,12 @@ app.get('/', function (req, res) {
 });
 
 app.get('/getmercd', function (req, res) {
-
-    console.log('http://' + req.headers.host + '/getmercd.gif');
-
     res.status(200).send({
         "response_type": 'in_channel',
+        "text" : '',
         "attachments": [
             {
-                "image_url": 'http://' + req.headers.host + '/getmercd.gif'
+                "image_url": req.headers.host + '/getmercd.gif'
             }
         ]
     });
