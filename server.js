@@ -3,8 +3,7 @@ var express = require('express');
 var mongoose = require('mongoose');
 var moment = require('moment');
 var async = require('async');
-
-var utilities = require('./app/utils');
+var shuffle = require('knuth-shuffle');
 
 // Connect to the database
 var database = require('./config/database');
@@ -12,6 +11,10 @@ mongoose.connect(database.db);
 
 // Create express application
 var app = express();
+
+// Serve static content from public
+var path = require('path');
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Load models
 var Gamenight = require('./models/gamenight');
@@ -38,7 +41,7 @@ app.get('/', function (req, res) {
                 Player.find({}, function (error, players) {
                     if (error) throw error;
 
-                    utilities.shuffle(players);
+                    shuffle.knuthShuffle(players);
 
                     var newGamenight = new Gamenight({date: wednesday.toDate()});
                     var games = [];
@@ -86,7 +89,7 @@ app.get('/', function (req, res) {
                 if(game.player2 !== '') {
                     attachStr = attachStr.concat(game.player1 + ' vs. ' + game.player2 + '\n');
                 } else {
-                    attachStr = attachStr.concat('Oddman: ' + game.player1);
+                    attachStr = attachStr.concat('Oddman: ' + game.player1 + '\n');
                 }
                 callback();
             }, function () {
@@ -101,6 +104,17 @@ app.get('/', function (req, res) {
                 });
             });
         });
+    });
+});
+
+app.get('/getmercd', function (req, res) {
+    res.status(200).send({
+        "response_type": 'in_channel',
+        "attachments": [
+            {
+                "image_url": 'http://' + req.headers.host + '/getmercd.gif'
+            }
+        ]
     });
 });
 
