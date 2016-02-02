@@ -53,8 +53,8 @@ app.get('/', function (req, res) {
                             var player2 = players.pop();
                             newGame.player2 = player2.name;
 
-                            player1.played.push(player2._id);
-                            player2.played.push(player1._id);
+                            //player1.played.push(player2._id);
+                            //player2.played.push(player1._id);
                         }
 
                         games.push(newGame);
